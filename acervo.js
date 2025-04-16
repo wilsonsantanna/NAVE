@@ -2,17 +2,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const livros = [
     {
       titulo: "Vozes da Experiência: Relatos de Pesquisa em Voz e Performance",
-      imagem: "./livro/01.jpg",
+      imagem: "./01.jpg",
       descricao: "Coletânea de textos sobre práticas vocais e experimentações na voz artística e acadêmica."
     },
     {
       titulo: "A Voz e o Corpo na Cena",
-      imagem: "./livro/02.jpg",
+      imagem: "./02.jpg",
       descricao: "Explora o papel da voz na atuação teatral e a sua relação com o corpo cênico."
     },
     {
       titulo: "Caminhos da Voz",
-      imagem: "./livro/03.webp",
+      imagem: "./03.webp",
       descricao: "Investigações sobre o uso da voz em diferentes práticas performativas e pedagógicas."
     }
   
