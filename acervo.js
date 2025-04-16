@@ -1,9 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
   const livros = [
     {
-      titulo: "Vozes da Experiência: Relatos de Pesquisa em Voz e Performance",
+      titulo: "Amazonia - Do Discurso A Praxis",
       imagem: "./01.jpg",
-      descricao: "Coletânea de textos sobre práticas vocais e experimentações na voz artística e acadêmica."
+      descricao: "Amazônia – Do Discurso à Práxis é uma obra instigante que propõe uma reflexão crítica sobre a realidade amazônica para além dos discursos idealizados ou utilitaristas que frequentemente cercam a região. 
+        O livro reúne análises que articulam teoria e prática, lançando luz sobre os múltiplos conflitos socioambientais, os saberes dos povos tradicionais e os desafios do desenvolvimento sustentável em um dos territórios mais biodiversos — e ao mesmo tempo mais ameaçados — do planeta.
+Através de uma abordagem interdisciplinar, os autores exploram temas como políticas públicas, justiça ambiental, protagonismo indígena e transformações territoriais, 
+  convidando o leitor a repensar os modelos de intervenção e as narrativas construídas sobre a Amazônia. Mais do que descrever a floresta e seus povos, a obra propõe caminhos de ação, resistência e esperança, 
+  onde o conhecimento acadêmico dialoga com as vivências concretas de quem habita e defende esse ecossistema vital para o planeta"
     },
     {
       titulo: "A Voz e o Corpo na Cena",
