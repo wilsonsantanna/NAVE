@@ -63,8 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const termo = busca.value.toLowerCase();
     const filtrados = livrosOrdenados.filter(livro =>
       livro.titulo.toLowerCase().includes(termo) ||
-      livro.descricao.toLowerCase().includes(termo),
-      livro.referencia.toLowerCase().includes(termo)
+      livro.descricao.toLowerCase().includes(termo)
     );
     exibirLivros(filtrados);
   });
