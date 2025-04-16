@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acervo - Projeto NAVE</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Acervo</h1>
+    <input type="text" id="busca" placeholder="Pesquisar livros...">
+  </header>
+
+  <main>
+    <section id="acervo-lista" class="grid-container">
+      <!-- Livros serão inseridos aqui dinamicamente -->
+    </section>
+
+    <section id="detalhes-livro" class="modal hidden">
+      <div class="modal-content">
+        <button id="fechar-modal">Fechar</button>
+        <h2 id="titulo-detalhe"></h2>
+        <img id="imagem-detalhe" src="" alt="">
+        <p id="descricao-detalhe"></p>
+      </div>
+    </section>
+  </main>
+
+  <script src="acervo.js"></script>
+</body>
+</html>
