@@ -44,8 +44,8 @@ header input[type="text"] {
 }
 
 .livro-card img {
-  max-width: 100%;
-  height: auto;
+  width: 200px;
+  height: 280px;
   border-bottom: 1px solid #ccc;
   margin-bottom: 0.5rem;
 }
@@ -84,8 +84,9 @@ header input[type="text"] {
 }
 
 .modal-content img {
-  max-width: 100%;
+  max-width: 200px;
   margin-bottom: 1rem;
+  position: center;
 }
 
 #fechar-modal {
@@ -98,4 +99,15 @@ header input[type="text"] {
   padding: 0.5rem 1rem;
   cursor: pointer;
   border-radius: 4px;
+}
+
+#referencia-detalhe {
+  font-weight: bold;
+}
+
+#detalhes-livro img {
+  display: block;
+  margin: 0 auto;
+  max-width: 250px;
+  height: auto;
 }
