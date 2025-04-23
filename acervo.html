@@ -1,16 +1,27 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Acervo - Projeto NAVE</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NAVE - Natureza, Violência, Ecocrítica</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <header>
+    <nav class="menu">
+      <ul>
+        <li><a href="#">Início</a></li>
+        <li><a href="./sobre.html">Sobre</a></li>
+        <li><a href="./acervo.html" class="current">Acervo</a></li>
+        <li><a href="./publicacao.html">Publicação</a></li>
+        <li><a href="#">Contato</a></li>
+      </ul>
+    </nav>
     <h1>Acervo</h1>
     <input type="text" id="busca" placeholder="Pesquisar livros...">
   </header>
+
+
 
   <main>
     <section id="acervo-lista" class="grid-container">
@@ -26,7 +37,12 @@
         <p id="referencia-detalhe"></p>
       </div>
     </section>
+
   </main>
+
+  <iframe allowfullscreen allow="fullscreen" style="border:none;width:100%;height:326px;" src="https://issuu.com/rdr?p=1&d=cartilha_eco-1&u=naveufmg"></iframe>
+  
+
 
   <script src="acervo.js"></script>
 </body>

@@ -1,14 +1,19 @@
-body {
-  font-family: Arial, sans-serif;
+/* Reset básico */
+* {
   margin: 0;
   padding: 0;
-  background-color: #f4f4f4;
-  color: #333;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #F1F1F1;
+  color: #4C5C42;
 }
 
 header {
-  background-color: #212121;
-  color: white;
+  background-color: #4C5C42;
+  color: #F1F1F1;
   padding: 1rem;
   text-align: center;
 }
@@ -21,6 +26,55 @@ header input[type="text"] {
   font-size: 1rem;
 }
 
+/* Menu */
+.menu {
+  background-color: #4C5C42;
+  padding: 1rem 0;
+}
+
+.menu ul {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.menu a {
+  text-decoration: none;
+  color: #F1F1F1;
+  font-size: 1.1rem;
+  transition: color 0.3s ease;
+}
+
+.menu a:hover {
+  color: #DDE8C0;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.menu .current {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* Conteúdo principal */
+.conteudo {
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.conteudo h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.conteudo p {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  text-align: justify;
+}
+
+/* Grid de livros */
 .grid-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -53,7 +107,7 @@ header input[type="text"] {
 .livro-card h3 {
   margin: 0.5rem 0;
   font-size: 1.1rem;
-  color: #212121;
+  color: #4C5C42;
 }
 
 /* Modal */
@@ -79,7 +133,7 @@ header input[type="text"] {
   padding: 2rem;
   border-radius: 8px;
   width: 90%;
-  max-width: 600px;
+  max-width: 90%;
   position: relative;
 }
 
@@ -110,4 +164,12 @@ header input[type="text"] {
   margin: 0 auto;
   max-width: 250px;
   height: auto;
+}
+
+.publicacao-frame {
+  display: none;
+  margin-top: 2rem;
+  width: 100%;
+  height: 600px;
+  border: none;
 }
