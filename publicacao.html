@@ -25,50 +25,17 @@
         <h1>Publicações</h1>
 
         
-        <a href="#" onclick="abrirModal('https://issuu.com/rdr?p=1&d=cartilha_eco-1&u=naveufmg'); return false;">
+        <a href="https://issuu.com/naveufmg/docs/cartilha_eco-1" target="_blank"  rel="noopener noreferrer">
             <figure>
               <img src="./publicacoes/manual para adiar o fim do mundo.png" width="250px" />
               <figcaption> Cartilha - Manual para adiar o fim do mundo</figcaption>
             </figure>
           </a>
-          
-        <!-- Modal -->
-        <div id="modalPublicacao" class="modal">
-            <div class="modal-conteudo">
-              <span class="fechar" onclick="fecharModal()">&times;</span>
-              <iframe id="iframePublicacao" allowfullscreen allow="fullscreen" frameborder="0"></iframe>
-            </div>
-          </div>
-          
+        
 
           
     </section>
   </main>
-
-  <script>
-
-    function abrirModal(url) {
-    const modal = document.getElementById("modalPublicacao");
-    const iframe = document.getElementById("iframePublicacao");
-    iframe.src = url;
-    modal.style.display = "block";
-  }
-
-  function fecharModal() {
-    const modal = document.getElementById("modalPublicacao");
-    const iframe = document.getElementById("iframePublicacao");
-    modal.style.display = "none";
-    iframe.src = ""; // Limpa o iframe para parar o carregamento
-  }
-
-  // Fecha o modal ao clicar fora da área do conteúdo
-  window.onclick = function(event) {
-    const modal = document.getElementById("modalPublicacao");
-    if (event.target === modal) {
-      fecharModal();
-    }
-  };
-  </script>
 
 </body>
 </html>
