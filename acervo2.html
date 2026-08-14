@@ -1,0 +1,38 @@
+<!-- 1. Importe a biblioteca PapaParse no seu head ou antes do seu script principal -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+
+<script>
+  // 2. Cole aqui o link CSV que você gerou no Google Sheets
+  const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRiLroU-1MbOLquTMnp1V7c0zWdCoE605Au1VM3kbi38taBOcdixb4n2PtW_Cbcq6P8PwvK022lhJOv/pub?gid=0&single=true&output=csv';
+
+  // 3. Função que busca e renderiza o acervo
+  function carregarAcervo() {
+    Papa.parse(csvUrl, {
+      download: true,
+      header: true, // Isso garante que os dados virem objetos usando os nomes das colunas
+      complete: function(results) {
+        const acervo = results.data; // Aqui está o array com todos os seus itens
+        renderizarNaTela(acervo);
+      },
+      error: function(err) {
+        console.error("Erro ao carregar acervo:", err);
+      }
+    });
+  }
+
+  // 4. Função para exibir os dados no seu HTML
+  function renderizarNaTela(itens) {
+    const container = document.getElementById('container-acervo');
+    container.innerHTML = ''; // Limpa o que estiver lá
+
+    itens.forEach(item => {
+      // Exemplo simples de criação de elemento:
+      const div = document.createElement('div');
+      div.innerHTML = `<h3>${item.titulo}</h3><p>${item.autor} (${item.ano})</p>`;
+      container.appendChild(div);
+    });
+  }
+
+  // Executa ao carregar a página
+  carregarAcervo();
+</script>
