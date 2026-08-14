@@ -1,161 +1,224 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acervo NAVE</title>
-    
-    <!-- Estilos básicos para garantir que a página tenha uma estrutura limpa e responsiva -->
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 20px;
-            color: #333;
-        }
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 30px;
-        }
-        /* O Grid que organiza os cartões lado a lado */
-        #acervo-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        /* Visual de cada arquivo/item do acervo */
-        .cartao {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.2s ease;
-            display: flex;
-            flex-direction: column;
-        }
-        .cartao:hover {
-            transform: translateY(-5px);
-        }
-        .cartao h3 {
-            margin-top: 0;
-            color: #2980b9;
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-        }
-        .cartao p {
-            margin: 5px 0;
-            font-size: 14px;
-            color: #555;
-            line-height: 1.4;
-        }
-        .botao-link {
-            display: inline-block;
-            margin-top: auto; /* Joga o botão para o fundo do cartão */
-            padding: 10px 15px;
-            background-color: #3498db;
-            color: white;
-            text-align: center;
-            text-decoration: none;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: bold;
-        }
-        .botao-link:hover {
-            background-color: #2980b9;
-        }
-        .mensagem-status {
-            text-align: center;
-            font-size: 18px;
-            color: #666;
-            grid-column: 1 / -1; /* Ocupa toda a largura da tela */
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NAVE - Natureza, Violência, Ecocrítica</title>
+  <!-- Mantém a chamada original para o seu arquivo de estilos -->
+  <link rel="stylesheet" href="style.css" />
+  
+  <style>
+    /* Estilos extras apenas para garantir o funcionamento do Modal e do clique,
+       caso não estejam totalmente definidos no seu style.css */
+    .livro-card {
+      background: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      cursor: pointer; /* Mostra que é clicável */
+      transition: transform 0.2s;
+    }
+    .livro-card:hover {
+      transform: translateY(-3px);
+    }
+    .livro-card h3 {
+      font-size: 1.1rem;
+      color: #333;
+      margin-top: 0;
+    }
+    .livro-card p {
+      font-size: 0.9rem;
+      color: #666;
+    }
+    .hidden {
+      display: none !important;
+    }
+    /* Estilo básico para o modal (caso não tenha no style.css) */
+    .modal {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    }
+    #fechar-modal {
+      position: absolute;
+      top: 15px; right: 15px;
+      background: #e74c3c;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+  </style>
 </head>
 <body>
+  <header>
+    <nav class="menu">
+      <ul>
+        <li><a href="./index.html">Início</a></li>
+        <li><a href="./sobre.html">Sobre</a></li>
+        <li><a href="./eventos.html">Eventos</a></li>
+        <li><a href="./acervo.html" class="current">Acervo</a></li>
+        <li><a href="./publicacao.html">Publicação</a></li>
+        <li><a href="#">Contato</a></li>
+      </ul>
+    </nav>
+    <h1>Acervo</h1>
+    <input type="text" id="busca" placeholder="Pesquisar livros...">
+  </header>
 
-    <h1>Acervo NAVE</h1>
+  <main>
+    <section id="acervo-lista" class="grid-container">
+      <!-- Livros serão inseridos aqui dinamicamente -->
+      <p style="grid-column: 1 / -1; text-align: center;">Carregando acervo...</p>
+    </section>
+
+    <section id="detalhes-livro" class="modal hidden">
+      <div class="modal-content">
+        <button id="fechar-modal">Fechar</button>
+        <h2 id="titulo-detalhe"></h2>
+        <img id="imagem-detalhe" src="" alt="" style="max-width: 100%; height: auto; display: none; margin-bottom: 15px;">
+        <p id="descricao-detalhe"></p>
+        <p id="referencia-detalhe" style="font-size: 0.9em; color: #555; margin-top: 15px;"></p>
+        <a id="link-detalhe" href="#" target="_blank" style="display: none; margin-top: 15px; display: inline-block; background: #333; color: #fff; padding: 8px 12px; text-decoration: none; border-radius: 4px;">Acessar Arquivo</a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Importa o PapaParse para ler a planilha -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+
+  <script>
+    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRiLroU-1MbOLquTMnp1V7c0zWdCoE605Au1VM3kbi38taBOcdixb4n2PtW_Cbcq6P8PwvK022lhJOv/pub?gid=0&single=true&output=csv';
     
-    <!-- DIV PRINCIPAL: É aqui dentro que o JavaScript vai desenhar os itens -->
-    <div id="acervo-container">
-        <p class="mensagem-status">Carregando acervo da planilha...</p>
-    </div>
+    let dadosAcervo = []; // Variável global para guardar os dados e permitir a pesquisa
 
-    <!-- Importa a biblioteca PapaParse responsável por ler a planilha do Google -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-
-    <script>
-        // O link exato da sua planilha que você forneceu
-        const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRiLroU-1MbOLquTMnp1V7c0zWdCoE605Au1VM3kbi38taBOcdixb4n2PtW_Cbcq6P8PwvK022lhJOv/pub?gid=0&single=true&output=csv';
-
-        // 1. Função que se conecta ao Google Sheets e puxa os dados
-        function carregarAcervo() {
-            Papa.parse(csvUrl, {
-                download: true,
-                header: true, // Lê a primeira linha como título das colunas
-                skipEmptyLines: true, // Ignora linhas em branco na planilha
-                complete: function(results) {
-                    const acervo = results.data;
-                    console.log("Dados carregados com sucesso da planilha:", acervo);
-                    renderizarNaTela(acervo);
-                },
-                error: function(err) {
-                    console.error("Erro ao ler o CSV do Google:", err);
-                    const container = document.getElementById('acervo-container');
-                    container.innerHTML = '<p class="mensagem-status" style="color: red;">Erro ao carregar os dados. Verifique se o link da planilha está correto.</p>';
-                }
-            });
+    // 1. Inicia o carregamento da planilha
+    function iniciar() {
+      Papa.parse(csvUrl, {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+          dadosAcervo = results.data;
+          renderizarLista(dadosAcervo);
+        },
+        error: function(err) {
+          document.getElementById('acervo-lista').innerHTML = '<p>Erro ao carregar os dados.</p>';
         }
+      });
+    }
 
-        // 2. Função que desenha o HTML na tela
-        function renderizarNaTela(itens) {
-            const container = document.getElementById('acervo-container');
-            container.innerHTML = ''; // Limpa a mensagem "Carregando..."
+    // 2. Renderiza os cartões na tela
+    function renderizarLista(itens) {
+      const lista = document.getElementById('acervo-lista');
+      lista.innerHTML = ''; // Limpa a tela
 
-            // Se a planilha estiver vazia, avisa o usuário
-            if(itens.length === 0) {
-                container.innerHTML = '<p class="mensagem-status">Nenhum item encontrado no acervo.</p>';
-                return;
-            }
+      if (itens.length === 0) {
+        lista.innerHTML = '<p style="grid-column: 1 / -1; text-align: center;">Nenhum livro encontrado.</p>';
+        return;
+      }
 
-            // Para cada linha da planilha, cria um cartão
-            itens.forEach(item => {
-                const divCard = document.createElement('div');
-                divCard.className = 'cartao';
+      itens.forEach((item, index) => {
+        // Pega as chaves reais da sua planilha para não dar erro
+        const colunas = Object.keys(item);
+        const titulo = item.titulo || item.Titulo || item.TÍTULO || item[colunas[0]] || 'Sem título';
+        const autor = item.autor || item.Autor || item[colunas[1]] || '';
 
-                // Extrai as chaves (nomes das colunas) dinamicamente.
-                // Isso evita o erro de tela branca caso você mude o nome de alguma coluna na planilha.
-                const colunas = Object.keys(item);
-                
-                // Define os valores baseados na posição das colunas da planilha (1ª, 2ª, 3ª, etc)
-                const titulo = item[colunas[0]] || 'Sem título'; 
-                const info1 = item[colunas[1]] || '';
-                const info2 = item[colunas[2]] || '';
-                
-                // Monta o texto que vai dentro do cartão
-                let htmlDoCartao = `<h3>${titulo}</h3>`;
-                
-                if (info1) htmlDoCartao += `<p><strong>Info:</strong> ${info1}</p>`;
-                if (info2) htmlDoCartao += `<p><strong>Detalhe:</strong> ${info2}</p>`;
-                
-                // Procura por alguma coluna que se chame "link", "url" (maiúsculo ou minúsculo)
-                const link = item.link || item.url || item.Link || item.URL || item['Link do Arquivo'];
-                
-                if (link) {
-                    htmlDoCartao += `<br><a href="${link}" class="botao-link" target="_blank">Acessar</a>`;
-                }
+        const card = document.createElement('div');
+        card.className = 'livro-card';
+        card.innerHTML = `
+          <h3>${titulo}</h3>
+          <p>${autor}</p>
+        `;
 
-                // Aplica o HTML no cartão e joga para dentro da div principal
-                divCard.innerHTML = htmlDoCartao;
-                container.appendChild(divCard);
-            });
-        }
+        // Ao clicar no cartão, abre o modal passando os dados daquele item
+        card.addEventListener('click', () => abrirModal(item));
+        
+        lista.appendChild(card);
+      });
+    }
 
-        // 3. Dispara o script automaticamente assim que a página é acessada
-        carregarAcervo();
-    </script>
+    // 3. Sistema de Busca / Filtro
+    document.getElementById('busca').addEventListener('input', function(e) {
+      const termoBusca = e.target.value.toLowerCase();
+      
+      const itensFiltrados = dadosAcervo.filter(item => {
+        // Junta todos os valores da linha em um texto só para pesquisar em tudo (título, autor, descrição)
+        const valoresDaLinha = Object.values(item).join(' ').toLowerCase();
+        return valoresDaLinha.includes(termoBusca);
+      });
+
+      renderizarLista(itensFiltrados);
+    });
+
+    // 4. Lógica do Modal (Detalhes do Livro)
+    function abrirModal(item) {
+      const colunas = Object.keys(item);
+      
+      // Mapeamento flexível (busca pela coluna certa independente de estar maiúscula/minúscula)
+      const titulo = item.titulo || item.Titulo || item.TÍTULO || item[colunas[0]] || 'Sem título';
+      const autor = item.autor || item.Autor || item[colunas[1]] || '';
+      const descricao = item.descricao || item.Descricao || item.Resumo || '';
+      const link = item.link || item.Link || item.URL || '';
+      const imagem = item.imagem || item.Capa || item.Foto || '';
+
+      // Preenche os campos do Modal
+      document.getElementById('titulo-detalhe').textContent = titulo;
+      document.getElementById('referencia-detalhe').textContent = autor ? `Referência: ${autor}` : '';
+      document.getElementById('descricao-detalhe').textContent = descricao;
+
+      // Trata a imagem
+      const imgElement = document.getElementById('imagem-detalhe');
+      if (imagem) {
+        imgElement.src = imagem;
+        imgElement.style.display = 'block';
+      } else {
+        imgElement.style.display = 'none';
+      }
+
+      // Trata o botão de link
+      const btnLink = document.getElementById('link-detalhe');
+      if (link) {
+        btnLink.href = link;
+        btnLink.style.display = 'inline-block';
+      } else {
+        btnLink.style.display = 'none';
+      }
+
+      // Mostra o Modal
+      document.getElementById('detalhes-livro').classList.remove('hidden');
+    }
+
+    // Fecha o Modal ao clicar no botão "Fechar"
+    document.getElementById('fechar-modal').addEventListener('click', function() {
+      document.getElementById('detalhes-livro').classList.add('hidden');
+    });
+
+    // Fecha o Modal se clicar no fundo escuro fora do conteúdo
+    document.getElementById('detalhes-livro').addEventListener('click', function(e) {
+      if (e.target === this) {
+        this.classList.add('hidden');
+      }
+    });
+
+    // Dispara a leitura da planilha
+    iniciar();
+  </script>
 </body>
 </html>
