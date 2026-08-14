@@ -1,38 +1,64 @@
-<!-- 1. Importe a biblioteca PapaParse no seu head ou antes do seu script principal -->
+<!-- Importa a biblioteca para ler a planilha -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 
 <script>
-  // 2. Cole aqui o link CSV que você gerou no Google Sheets
+  // O link da sua planilha publicada
   const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRiLroU-1MbOLquTMnp1V7c0zWdCoE605Au1VM3kbi38taBOcdixb4n2PtW_Cbcq6P8PwvK022lhJOv/pub?gid=0&single=true&output=csv';
 
-  // 3. Função que busca e renderiza o acervo
+  // Função principal para buscar os dados
   function carregarAcervo() {
     Papa.parse(csvUrl, {
       download: true,
-      header: true, // Isso garante que os dados virem objetos usando os nomes das colunas
+      header: true, // Transforma a primeira linha da planilha nas chaves do objeto JS
+      skipEmptyLines: true, // Ignora linhas em branco na planilha
       complete: function(results) {
-        const acervo = results.data; // Aqui está o array com todos os seus itens
+        const acervo = results.data;
+        
+        // Exibe no console apenas para você testar e ver se os dados estão chegando
+        console.log("Dados carregados com sucesso:", acervo);
+        
+        // Chama a função que desenha o HTML na tela
         renderizarNaTela(acervo);
       },
       error: function(err) {
-        console.error("Erro ao carregar acervo:", err);
+        console.error("Erro ao carregar o acervo da planilha:", err);
       }
     });
   }
 
-  // 4. Função para exibir os dados no seu HTML
+  // Função para montar o HTML de cada item
   function renderizarNaTela(itens) {
-    const container = document.getElementById('container-acervo');
-    container.innerHTML = ''; // Limpa o que estiver lá
+    // ATENÇÃO: Substitua 'container-do-acervo' pelo ID real da div onde os itens aparecem no seu site
+    const container = document.getElementById('container-do-acervo');
+    
+    // Limpa o conteúdo de "Carregando..." (se houver)
+    if (container) container.innerHTML = ''; 
 
     itens.forEach(item => {
-      // Exemplo simples de criação de elemento:
-      const div = document.createElement('div');
-      div.innerHTML = `<h3>${item.titulo}</h3><p>${item.autor} (${item.ano})</p>`;
-      container.appendChild(div);
+      // Cria um novo elemento para cada linha da planilha
+      const divItem = document.createElement('div');
+      
+      // Adicione aqui as classes CSS (Tailwind, Bootstrap, etc) que você já usa
+      divItem.className = 'seu-estilo-de-card-aqui'; 
+
+      /* 
+         IMPORTANTE: Os nomes depois do 'item.' devem ser EXATAMENTE IGUAIS 
+         aos nomes que estão no cabeçalho (primeira linha) da sua planilha.
+         Se na planilha está "Título", use item.Título.
+         Se está "Link da Imagem", não vai funcionar com espaços, 
+         então o ideal é usar nomes simples na planilha, como: titulo, autor, link.
+      */
+      divItem.innerHTML = `
+        <h3>${item.titulo}</h3>
+        <p>${item.autor}</p>
+        <a href="${item.link}" target="_blank">Acessar Arquivo</a>
+      `;
+      
+      // Joga o item dentro do container principal
+      container.appendChild(divItem);
     });
   }
 
-  // Executa ao carregar a página
+  // Dispara o carregamento assim que o script for lido
   carregarAcervo();
 </script>
