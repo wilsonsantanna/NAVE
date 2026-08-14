@@ -1,64 +1,161 @@
-<!-- Importa a biblioteca para ler a planilha -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-
-<script>
-  // O link da sua planilha publicada
-  const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRiLroU-1MbOLquTMnp1V7c0zWdCoE605Au1VM3kbi38taBOcdixb4n2PtW_Cbcq6P8PwvK022lhJOv/pub?gid=0&single=true&output=csv';
-
-  // Função principal para buscar os dados
-  function carregarAcervo() {
-    Papa.parse(csvUrl, {
-      download: true,
-      header: true, // Transforma a primeira linha da planilha nas chaves do objeto JS
-      skipEmptyLines: true, // Ignora linhas em branco na planilha
-      complete: function(results) {
-        const acervo = results.data;
-        
-        // Exibe no console apenas para você testar e ver se os dados estão chegando
-        console.log("Dados carregados com sucesso:", acervo);
-        
-        // Chama a função que desenha o HTML na tela
-        renderizarNaTela(acervo);
-      },
-      error: function(err) {
-        console.error("Erro ao carregar o acervo da planilha:", err);
-      }
-    });
-  }
-
-  // Função para montar o HTML de cada item
-  function renderizarNaTela(itens) {
-    // ATENÇÃO: Substitua 'container-do-acervo' pelo ID real da div onde os itens aparecem no seu site
-    const container = document.getElementById('container-do-acervo');
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acervo NAVE</title>
     
-    // Limpa o conteúdo de "Carregando..." (se houver)
-    if (container) container.innerHTML = ''; 
+    <!-- Estilos básicos para garantir que a página tenha uma estrutura limpa e responsiva -->
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        /* O Grid que organiza os cartões lado a lado */
+        #acervo-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        /* Visual de cada arquivo/item do acervo */
+        .cartao {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .cartao:hover {
+            transform: translateY(-5px);
+        }
+        .cartao h3 {
+            margin-top: 0;
+            color: #2980b9;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        .cartao p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #555;
+            line-height: 1.4;
+        }
+        .botao-link {
+            display: inline-block;
+            margin-top: auto; /* Joga o botão para o fundo do cartão */
+            padding: 10px 15px;
+            background-color: #3498db;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .botao-link:hover {
+            background-color: #2980b9;
+        }
+        .mensagem-status {
+            text-align: center;
+            font-size: 18px;
+            color: #666;
+            grid-column: 1 / -1; /* Ocupa toda a largura da tela */
+        }
+    </style>
+</head>
+<body>
 
-    itens.forEach(item => {
-      // Cria um novo elemento para cada linha da planilha
-      const divItem = document.createElement('div');
-      
-      // Adicione aqui as classes CSS (Tailwind, Bootstrap, etc) que você já usa
-      divItem.className = 'seu-estilo-de-card-aqui'; 
+    <h1>Acervo NAVE</h1>
+    
+    <!-- DIV PRINCIPAL: É aqui dentro que o JavaScript vai desenhar os itens -->
+    <div id="acervo-container">
+        <p class="mensagem-status">Carregando acervo da planilha...</p>
+    </div>
 
-      /* 
-         IMPORTANTE: Os nomes depois do 'item.' devem ser EXATAMENTE IGUAIS 
-         aos nomes que estão no cabeçalho (primeira linha) da sua planilha.
-         Se na planilha está "Título", use item.Título.
-         Se está "Link da Imagem", não vai funcionar com espaços, 
-         então o ideal é usar nomes simples na planilha, como: titulo, autor, link.
-      */
-      divItem.innerHTML = `
-        <h3>${item.titulo}</h3>
-        <p>${item.autor}</p>
-        <a href="${item.link}" target="_blank">Acessar Arquivo</a>
-      `;
-      
-      // Joga o item dentro do container principal
-      container.appendChild(divItem);
-    });
-  }
+    <!-- Importa a biblioteca PapaParse responsável por ler a planilha do Google -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 
-  // Dispara o carregamento assim que o script for lido
-  carregarAcervo();
-</script>
+    <script>
+        // O link exato da sua planilha que você forneceu
+        const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRiLroU-1MbOLquTMnp1V7c0zWdCoE605Au1VM3kbi38taBOcdixb4n2PtW_Cbcq6P8PwvK022lhJOv/pub?gid=0&single=true&output=csv';
+
+        // 1. Função que se conecta ao Google Sheets e puxa os dados
+        function carregarAcervo() {
+            Papa.parse(csvUrl, {
+                download: true,
+                header: true, // Lê a primeira linha como título das colunas
+                skipEmptyLines: true, // Ignora linhas em branco na planilha
+                complete: function(results) {
+                    const acervo = results.data;
+                    console.log("Dados carregados com sucesso da planilha:", acervo);
+                    renderizarNaTela(acervo);
+                },
+                error: function(err) {
+                    console.error("Erro ao ler o CSV do Google:", err);
+                    const container = document.getElementById('acervo-container');
+                    container.innerHTML = '<p class="mensagem-status" style="color: red;">Erro ao carregar os dados. Verifique se o link da planilha está correto.</p>';
+                }
+            });
+        }
+
+        // 2. Função que desenha o HTML na tela
+        function renderizarNaTela(itens) {
+            const container = document.getElementById('acervo-container');
+            container.innerHTML = ''; // Limpa a mensagem "Carregando..."
+
+            // Se a planilha estiver vazia, avisa o usuário
+            if(itens.length === 0) {
+                container.innerHTML = '<p class="mensagem-status">Nenhum item encontrado no acervo.</p>';
+                return;
+            }
+
+            // Para cada linha da planilha, cria um cartão
+            itens.forEach(item => {
+                const divCard = document.createElement('div');
+                divCard.className = 'cartao';
+
+                // Extrai as chaves (nomes das colunas) dinamicamente.
+                // Isso evita o erro de tela branca caso você mude o nome de alguma coluna na planilha.
+                const colunas = Object.keys(item);
+                
+                // Define os valores baseados na posição das colunas da planilha (1ª, 2ª, 3ª, etc)
+                const titulo = item[colunas[0]] || 'Sem título'; 
+                const info1 = item[colunas[1]] || '';
+                const info2 = item[colunas[2]] || '';
+                
+                // Monta o texto que vai dentro do cartão
+                let htmlDoCartao = `<h3>${titulo}</h3>`;
+                
+                if (info1) htmlDoCartao += `<p><strong>Info:</strong> ${info1}</p>`;
+                if (info2) htmlDoCartao += `<p><strong>Detalhe:</strong> ${info2}</p>`;
+                
+                // Procura por alguma coluna que se chame "link", "url" (maiúsculo ou minúsculo)
+                const link = item.link || item.url || item.Link || item.URL || item['Link do Arquivo'];
+                
+                if (link) {
+                    htmlDoCartao += `<br><a href="${link}" class="botao-link" target="_blank">Acessar</a>`;
+                }
+
+                // Aplica o HTML no cartão e joga para dentro da div principal
+                divCard.innerHTML = htmlDoCartao;
+                container.appendChild(divCard);
+            });
+        }
+
+        // 3. Dispara o script automaticamente assim que a página é acessada
+        carregarAcervo();
+    </script>
+</body>
+</html>
