@@ -5,31 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NAVE - Natureza, Violência, Ecocrítica</title>
   <link rel="stylesheet" href="style.css" />
-  
-  <style>
-    /* Mantive apenas o CSS essencial para os cartões da lista, 
-       já que o modal agora vai usar 100% o seu style.css */
-    .livro-card {
-      background: #fff;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-    .livro-card:hover {
-      transform: translateY(-3px);
-    }
-    .livro-card h3 {
-      font-size: 1.1rem;
-      color: #333;
-      margin-top: 0;
-    }
-    .livro-card p {
-      font-size: 0.9rem;
-      color: #666;
-    }
-  </style>
 </head>
 <body>
   <header>
@@ -53,7 +28,7 @@
       <p style="grid-column: 1 / -1; text-align: center;">Carregando acervo...</p>
     </section>
 
-    <!-- Estrutura do Modal 100% idêntica ao seu HTML original -->
+    <!-- Modal 100% Original -->
     <section id="detalhes-livro" class="modal hidden">
       <div class="modal-content">
         <button id="fechar-modal">Fechar</button>
@@ -61,22 +36,19 @@
         <img id="imagem-detalhe" src="" alt="">
         <p id="descricao-detalhe"></p>
         <p id="referencia-detalhe"></p>
-        <!-- Adicionado apenas o link de acesso oculto por padrão -->
-        <a id="link-detalhe" href="#" target="_blank" class="hidden">Acessar Arquivo</a>
       </div>
     </section>
 
   </main>
 
-  <!-- Importa o PapaParse para ler a planilha -->
+  <!-- Script para ler a planilha e injetar os dados -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-
   <script>
     const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRiLroU-1MbOLquTMnp1V7c0zWdCoE605Au1VM3kbi38taBOcdixb4n2PtW_Cbcq6P8PwvK022lhJOv/pub?gid=0&single=true&output=csv';
     
     let dadosAcervo = [];
 
-    // 1. Inicia o carregamento da planilha
+    // 1. Carrega a planilha
     function iniciar() {
       Papa.parse(csvUrl, {
         download: true,
@@ -87,12 +59,12 @@
           renderizarLista(dadosAcervo);
         },
         error: function(err) {
-          document.getElementById('acervo-lista').innerHTML = '<p>Erro ao carregar os dados.</p>';
+          document.getElementById('acervo-lista').innerHTML = '<p>Erro ao carregar a planilha.</p>';
         }
       });
     }
 
-    // 2. Renderiza os cartões na tela
+    // 2. Renderiza os cartões na lista principal
     function renderizarLista(itens) {
       const lista = document.getElementById('acervo-lista');
       lista.innerHTML = ''; 
@@ -103,79 +75,79 @@
       }
 
       itens.forEach((item) => {
-        const colunas = Object.keys(item);
-        const titulo = item.titulo || item.Titulo || item.TÍTULO || item[colunas[0]] || 'Sem título';
-        const autor = item.autor || item.Autor || item[colunas[1]] || '';
+        // Pega os dados exatos das colunas da planilha
+        const titulo = item.titulo || 'Sem título';
+        const referencia = item.referencia || '';
+        const imagem = item.imagem || '';
 
+        // Monta o cartão do livro (adapte as tags se o seu style.css pedir uma estrutura diferente aqui)
         const card = document.createElement('div');
-        card.className = 'livro-card';
-        card.innerHTML = `
-          <h3>${titulo}</h3>
-          <p>${autor}</p>
-        `;
+        card.className = 'livro-card'; // Importante: garanta que esta classe existe no seu style.css
+        
+        // Se houver imagem, mostra a capinha na lista; se não, mostra só o texto
+        let conteudoCard = '';
+        if (imagem) {
+            conteudoCard += `<img src="${imagem}" alt="Capa" style="width:100%; max-height:200px; object-fit:cover; margin-bottom:10px;">`;
+        }
+        conteudoCard += `<h3>${titulo}</h3><p>${referencia}</p>`;
+        
+        card.innerHTML = conteudoCard;
 
+        // Adiciona o evento de clique para abrir o modal original
         card.addEventListener('click', () => abrirModal(item));
         lista.appendChild(card);
       });
     }
 
-    // 3. Sistema de Busca / Filtro
+    // 3. Sistema de Busca
     document.getElementById('busca').addEventListener('input', function(e) {
       const termoBusca = e.target.value.toLowerCase();
-      
       const itensFiltrados = dadosAcervo.filter(item => {
         const valoresDaLinha = Object.values(item).join(' ').toLowerCase();
         return valoresDaLinha.includes(termoBusca);
       });
-
       renderizarLista(itensFiltrados);
     });
 
-    // 4. Lógica do Modal (Detalhes do Livro)
+    // 4. Lógica do Modal com os PARÂMETROS ANTIGOS
     function abrirModal(item) {
-      const colunas = Object.keys(item);
-      
-      const titulo = item.titulo || item.Titulo || item.TÍTULO || item[colunas[0]] || 'Sem título';
-      const autor = item.autor || item.Autor || item[colunas[1]] || '';
-      const descricao = item.descricao || item.Descricao || item.Resumo || '';
-      const link = item.link || item.Link || item.URL || '';
-      const imagem = item.imagem || item.Capa || item.Foto || '';
+      // Puxa exatamente as 4 colunas que você vai criar no Google Sheets
+      const titulo = item.titulo || '';
+      const imagem = item.imagem || '';
+      const descricao = item.descricao || '';
+      const referencia = item.referencia || '';
 
+      // Injeta direto nas tags do seu HTML sem modificar a estrutura
       document.getElementById('titulo-detalhe').textContent = titulo;
-      document.getElementById('referencia-detalhe').textContent = autor ? `Referência: ${autor}` : '';
       document.getElementById('descricao-detalhe').textContent = descricao;
+      document.getElementById('referencia-detalhe').textContent = referencia;
 
       const imgElement = document.getElementById('imagem-detalhe');
       if (imagem) {
         imgElement.src = imagem;
-        imgElement.classList.remove('hidden');
-        imgElement.style.display = ''; // Limpa qualquer display none
+        imgElement.style.display = ''; // Deixa o seu CSS definir o tamanho
       } else {
         imgElement.src = '';
-        imgElement.style.display = 'none'; // Esconde para não ficar com ícone de imagem quebrada
+        imgElement.style.display = 'none'; // Esconde a tag para não ficar com ícone quebrado
       }
 
-      const btnLink = document.getElementById('link-detalhe');
-      if (link) {
-        btnLink.href = link;
-        btnLink.classList.remove('hidden');
-      } else {
-        btnLink.classList.add('hidden');
-      }
-
+      // Exibe o modal
       document.getElementById('detalhes-livro').classList.remove('hidden');
     }
 
+    // Fechar o modal no botão
     document.getElementById('fechar-modal').addEventListener('click', function() {
       document.getElementById('detalhes-livro').classList.add('hidden');
     });
 
+    // Fechar o modal clicando fora dele
     document.getElementById('detalhes-livro').addEventListener('click', function(e) {
       if (e.target === this) {
         this.classList.add('hidden');
       }
     });
 
+    // Roda a aplicação
     iniciar();
   </script>
 </body>
