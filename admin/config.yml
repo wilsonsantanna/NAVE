@@ -1,0 +1,27 @@
+backend:
+  name: github
+  repo: wilsonsantanna/NAVE # Seu repositório
+  branch: main # Branch principal
+
+media_folder: "images/acervo" # Onde as fotos do acervo serão salvas (se houver)
+public_folder: "/images/acervo" # Caminho público das fotos
+
+collections:
+  - name: "acervo"
+    label: "Acervo NAVE"
+    files:
+      - label: "Dados do Acervo"
+        name: "dados_acervo"
+        file: "acervo.json" # O arquivo que o CMS vai editar
+        description: "Adicione ou edite os itens do acervo"
+        fields:
+          # Cria um widget do tipo "lista", permitindo adicionar vários itens
+          - label: "Itens do Acervo"
+            name: "itens"
+            widget: "list"
+            fields:
+              - {label: "Título", name: "titulo", widget: "string"}
+              - {label: "Autor", name: "autor", widget: "string"}
+              - {label: "Ano", name: "ano", widget: "number"}
+              - {label: "Link do Arquivo", name: "link", widget: "string"}
+              # Você recria aqui a estrutura exata do seu acervo atual
