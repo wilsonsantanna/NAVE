@@ -7,27 +7,39 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <a class="skip-link" href="#conteudo-principal">Pular para o conteúdo</a>
   <header>
     <nav class="menu">
-      <ul>
-        <li><a href="./index.html">Início</a></li>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-list">
+        <span aria-hidden="true">☰</span>
+        <span class="sr-only">Menu</span>
+      </button>
+      <ul id="menu-list">
+        <li><a href="./index.html" class="current">Início</a></li>
         <li><a href="./sobre.html">Sobre</a></li>
         <li><a href="./eventos.html">Eventos</a></li>
         <li><a href="./acervo.html">Acervo</a></li>
         <li><a href="./publicacao.html">Publicação</a></li>
-        <li><a href="#">Contato</a></li>
+        <li><a href="#contato">Contato</a></li>
       </ul>
     </nav>
   </header>
 
-  <main>
+  <main id="conteudo-principal">
     <section class="conteudo">
       <h1>Grupo de Pesquisa NAVE (Natureza, Violência, Ecocrítica)</h1>
-      <img src="./imagem/logo.webp" width="50%"/>
+      <img src="./imagem/logo.webp" width="50%" alt="Logotipo do Grupo de Pesquisa NAVE"/>
       <p style="text-align: center;">Formado em 2020 na Faculdade de Letras da UFMG, o NAVE reúne pós-graduandos, graduandos e docentes em torno de estudos ecocríticos com ênfase transdisciplinar.</p>
       <p style="text-align: center;">O grupo realiza encontros quinzenais para debater textos literários, artísticos e teóricos voltados à representação da natureza, às questões ambientais e aos impactos da crise ecológica.</p>
     </section>
   </main>
 
+  <footer id="contato">
+    <p><strong>Ecobiblioteca NAVE</strong> — Faculdade de Letras da UFMG</p>
+    <p>Av. Pres. Antônio Carlos, 6627, sala 2025, Pampulha, Belo Horizonte</p>
+    <p>Segunda à sexta, das 9h às 13h e das 14h às 18h</p>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
