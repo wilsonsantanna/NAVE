@@ -24,11 +24,9 @@
 
   <main>
     <section id="acervo-lista" class="grid-container">
-      <!-- Livros serão inseridos aqui dinamicamente -->
       <p style="grid-column: 1 / -1; text-align: center;">Carregando acervo...</p>
     </section>
 
-    <!-- Modal 100% Original -->
     <section id="detalhes-livro" class="modal hidden">
       <div class="modal-content">
         <button id="fechar-modal">Fechar</button>
@@ -38,17 +36,33 @@
         <p id="referencia-detalhe"></p>
       </div>
     </section>
-
   </main>
 
-  <!-- Script para ler a planilha e injetar os dados -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  
   <script>
     const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRiLroU-1MbOLquTMnp1V7c0zWdCoE605Au1VM3kbi38taBOcdixb4n2PtW_Cbcq6P8PwvK022lhJOv/pub?gid=0&single=true&output=csv';
-    
     let dadosAcervo = [];
 
-    // 1. Carrega a planilha
+    // Função Mágica: Tenta buscar na Open Library se a imagem local falhar
+    function tratarErroCapa(img, isbn) {
+      // Se a imagem que deu erro JÁ É a da Open Library, significa que a API também não achou.
+      // Então, ocultamos a tag para não mostrar o ícone de arquivo quebrado.
+      if (img.src.includes('covers.openlibrary.org')) {
+        img.style.display = 'none';
+        return;
+      }
+
+      // Se deu erro na imagem local e temos um ISBN, tentamos a API
+      if (isbn) {
+        // Usamos o parâmetro L (Large) para boa qualidade, e default=false para poder tratar erros
+        img.src = `https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg?default=false`;
+      } else {
+        // Sem imagem local e sem ISBN, esconde
+        img.style.display = 'none';
+      }
+    }
+
     function iniciar() {
       Papa.parse(csvUrl, {
         download: true,
@@ -64,7 +78,6 @@
       });
     }
 
-    // 2. Renderiza os cartões na lista principal
     function renderizarLista(itens) {
       const lista = document.getElementById('acervo-lista');
       lista.innerHTML = ''; 
@@ -75,31 +88,33 @@
       }
 
       itens.forEach((item) => {
-        // Pega os dados exatos das colunas da planilha
         const titulo = item.titulo || 'Sem título';
         const referencia = item.referencia || '';
-        const imagem = item.imagem || '';
+        const imagemLocal = item.imagem || '';
+        const isbn = item.isbn || '';
 
-        // Monta o cartão do livro (adapte as tags se o seu style.css pedir uma estrutura diferente aqui)
         const card = document.createElement('div');
-        card.className = 'livro-card'; // Importante: garanta que esta classe existe no seu style.css
+        card.className = 'livro-card'; 
         
-        // Se houver imagem, mostra a capinha na lista; se não, mostra só o texto
         let conteudoCard = '';
-        if (imagem) {
-            conteudoCard += `<img src="${imagem}" alt="Capa" style="width:100%; max-height:200px; object-fit:cover; margin-bottom:10px;">`;
-        }
-        conteudoCard += `<h3>${titulo}</h3><p>${referencia}</p>`;
         
+        // Define a fonte inicial: se não tiver imagem na planilha, mas tiver ISBN, já pula direto pra API.
+        // Se tiver imagem na planilha, tenta ela primeiro.
+        let srcInicial = imagemLocal ? imagemLocal : (isbn ? `https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg?default=false` : '');
+
+        if (srcInicial) {
+            // O atributo onerror é onde a mágica de fallback acontece
+            conteudoCard += `<img src="${srcInicial}" onerror="tratarErroCapa(this, '${isbn}')" alt="Capa de ${titulo}" style="width:100%; max-height:200px; object-fit:cover; margin-bottom:10px;">`;
+        }
+
+        conteudoCard += `<h3>${titulo}</h3><p>${referencia}</p>`;
         card.innerHTML = conteudoCard;
 
-        // Adiciona o evento de clique para abrir o modal original
         card.addEventListener('click', () => abrirModal(item));
         lista.appendChild(card);
       });
     }
 
-    // 3. Sistema de Busca
     document.getElementById('busca').addEventListener('input', function(e) {
       const termoBusca = e.target.value.toLowerCase();
       const itensFiltrados = dadosAcervo.filter(item => {
@@ -109,45 +124,44 @@
       renderizarLista(itensFiltrados);
     });
 
-    // 4. Lógica do Modal com os PARÂMETROS ANTIGOS
     function abrirModal(item) {
-      // Puxa exatamente as 4 colunas que você vai criar no Google Sheets
       const titulo = item.titulo || '';
-      const imagem = item.imagem || '';
+      const imagemLocal = item.imagem || '';
       const descricao = item.descricao || '';
       const referencia = item.referencia || '';
+      const isbn = item.isbn || '';
 
-      // Injeta direto nas tags do seu HTML sem modificar a estrutura
       document.getElementById('titulo-detalhe').textContent = titulo;
       document.getElementById('descricao-detalhe').textContent = descricao;
       document.getElementById('referencia-detalhe').textContent = referencia;
 
       const imgElement = document.getElementById('imagem-detalhe');
-      if (imagem) {
-        imgElement.src = imagem;
-        imgElement.style.display = ''; // Deixa o seu CSS definir o tamanho
+      
+      let srcInicial = imagemLocal ? imagemLocal : (isbn ? `https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg?default=false` : '');
+
+      if (srcInicial) {
+        imgElement.src = srcInicial;
+        imgElement.style.display = ''; 
+        // Reaplica a regra de fallback no modal
+        imgElement.onerror = function() { tratarErroCapa(this, isbn); };
       } else {
         imgElement.src = '';
-        imgElement.style.display = 'none'; // Esconde a tag para não ficar com ícone quebrado
+        imgElement.style.display = 'none';
       }
 
-      // Exibe o modal
       document.getElementById('detalhes-livro').classList.remove('hidden');
     }
 
-    // Fechar o modal no botão
     document.getElementById('fechar-modal').addEventListener('click', function() {
       document.getElementById('detalhes-livro').classList.add('hidden');
     });
 
-    // Fechar o modal clicando fora dele
     document.getElementById('detalhes-livro').addEventListener('click', function(e) {
       if (e.target === this) {
         this.classList.add('hidden');
       }
     });
 
-    // Roda a aplicação
     iniciar();
   </script>
 </body>
