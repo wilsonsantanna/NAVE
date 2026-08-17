@@ -1,24 +1,19 @@
 document.addEventListener("DOMContentLoaded", () => {
-  fetch("eventos.html")
-    .then(response => response.json())
-    .then(eventos => {
-      const container = document.getElementById("eventos-container");
+  const toggle = document.querySelector(".menu-toggle");
+  const lista = document.querySelector(".menu ul");
 
-      eventos.forEach(evento => {
-        const card = document.createElement("div");
-        card.className = "evento-card";
-
-        card.innerHTML = `
-          <h3>${evento.titulo}</h3>
-          <p><strong>Data:</strong> ${evento.data}</p>
-          <p>${evento.descricao}</p>
-          <a href="${evento.link}">Saiba mais</a>
-        `;
-
-        container.appendChild(card);
-      });
-    })
-    .catch(error => {
-      console.error("Erro ao carregar eventos:", error);
+  if (toggle && lista) {
+    toggle.addEventListener("click", () => {
+      const aberto = lista.classList.toggle("open");
+      toggle.setAttribute("aria-expanded", String(aberto));
     });
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      document.querySelectorAll(".modal:not(.hidden)").forEach((modal) => {
+        modal.classList.add("hidden");
+      });
+    }
+  });
 });

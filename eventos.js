@@ -31,16 +31,25 @@ document.addEventListener("DOMContentLoaded", () => {
       card.className = "livro-card";
 
       card.innerHTML = `
-        <img src="${livro.imagem}" alt="${livro.titulo}">
+        ${livro.imagem ? `<img src="${livro.imagem}" alt="${livro.titulo}">` : ""}
         <h3>${livro.titulo}</h3>
+        <p><strong>Data:</strong> ${livro.data}</p>
       `;
 
       card.addEventListener("click", () => {
         tituloDetalhe.textContent = livro.titulo;
-        imagemDetalhe.src = livro.imagem;
-        imagemDetalhe.alt = livro.titulo;
         descricaoDetalhe.textContent = livro.descricao;
-        referenciaDetalhe.textContent = livro.referencia;
+        referenciaDetalhe.textContent = livro.data ? `Data: ${livro.data}` : "";
+
+        if (livro.imagem) {
+          imagemDetalhe.src = livro.imagem;
+          imagemDetalhe.alt = livro.titulo;
+          imagemDetalhe.style.display = "";
+        } else {
+          imagemDetalhe.src = "";
+          imagemDetalhe.style.display = "none";
+        }
+
         modal.classList.remove("hidden");
       });
 
@@ -50,16 +59,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const livrosOrdenados = [...livros];
   exibirLivros(livrosOrdenados);
-
-  busca.addEventListener("input", () => {
-    const termo = busca.value.toLowerCase();
-    const filtrados = livrosOrdenados.filter(livro =>
-      livro.titulo.toLowerCase().includes(termo) ||
-      livro.descricao.toLowerCase().includes(termo) ||
-      livro.referencia.toLowerCase().includes(termo)
-    );
-    exibirLivros(filtrados);
-  });
 
   fecharModal.addEventListener("click", () => {
     modal.classList.add("hidden");

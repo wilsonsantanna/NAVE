@@ -7,22 +7,27 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <a class="skip-link" href="#conteudo-principal">Pular para o conteúdo</a>
   <header>
     <nav class="menu">
-      <ul>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-list">
+        <span aria-hidden="true">☰</span>
+        <span class="sr-only">Menu</span>
+      </button>
+      <ul id="menu-list">
         <li><a href="./index.html">Início</a></li>
         <li><a href="./sobre.html" class="current">Sobre</a></li>
         <li><a href="./eventos.html">Eventos</a></li>
         <li><a href="./acervo.html">Acervo</a></li>
         <li><a href="./publicacao.html">Publicação</a></li>
-        <li><a href="#">Contato</a></li>
+        <li><a href="#contato">Contato</a></li>
       </ul>
     </nav>
   </header>
 
-  <main>
+  <main id="conteudo-principal">
     <section class="conteudo">
-      <img src="./imagem/ecobiblioteca.webp" width="80%">
+      <img src="./imagem/ecobiblioteca.webp" width="80%" alt="Espaço físico da Ecobiblioteca no Centro Cultural da UFMG">
       <p>Projeto de extensão cujo objetivo é estabelecer, 
         através do espaço físico da Ecobiblioteca no Centro Cultural da UFMG, 
         uma ponte entre a Universidade e a comunidade externa, com trocas de saberes, 
@@ -78,10 +83,16 @@
         aprofundamento de reflexões sobre a ecocrítica, econarrativas, land art e ecologia de modo geral.
     </p>
 
-    
+
     </section>
   </main>
 
+  <footer id="contato">
+    <p><strong>Ecobiblioteca NAVE</strong> — Faculdade de Letras da UFMG</p>
+    <p>Av. Pres. Antônio Carlos, 6627, sala 2025, Pampulha, Belo Horizonte</p>
+    <p>Segunda à sexta, das 9h às 13h e das 14h às 18h</p>
+  </footer>
 
+  <script src="script.js"></script>
 </body>
 </html>

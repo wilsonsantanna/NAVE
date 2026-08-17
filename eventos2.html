@@ -63,22 +63,27 @@
   </style>
 </head>
 <body>
+  <a class="skip-link" href="#conteudo-principal">Pular para o conteúdo</a>
   <header>
     <nav class="menu">
-      <ul>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-list">
+        <span aria-hidden="true">☰</span>
+        <span class="sr-only">Menu</span>
+      </button>
+      <ul id="menu-list">
         <li><a href="./index.html">Início</a></li>
         <li><a href="./sobre.html">Sobre</a></li>
         <li><a href="./eventos.html" class="current">Eventos</a></li>
         <li><a href="./acervo.html">Acervo</a></li>
         <li><a href="./publicacao.html">Publicação</a></li>
-        <li><a href="#">Contato</a></li>
+        <li><a href="#contato">Contato</a></li>
       </ul>
     </nav>
   </header>
 
   <h1 class="conteudo">Eventos</h1>
-  
-  <main>
+
+  <main id="conteudo-principal">
     <!-- Container da Galeria -->
     <section id="eventos-lista" class="galeria-eventos">
       <p style="grid-column: 1 / -1; text-align: center;">Carregando eventos...</p>
@@ -97,6 +102,13 @@
 
   </main>
 
+  <footer id="contato">
+    <p><strong>Ecobiblioteca NAVE</strong> — Faculdade de Letras da UFMG</p>
+    <p>Av. Pres. Antônio Carlos, 6627, sala 2025, Pampulha, Belo Horizonte</p>
+    <p>Segunda à sexta, das 9h às 13h e das 14h às 18h</p>
+  </footer>
+
+  <script src="script.js"></script>
   <!-- Script para ler a planilha e injetar os dados -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <script>
