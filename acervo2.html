@@ -44,25 +44,7 @@
     const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRiLroU-1MbOLquTMnp1V7c0zWdCoE605Au1VM3kbi38taBOcdixb4n2PtW_Cbcq6P8PwvK022lhJOv/pub?gid=0&single=true&output=csv';
     let dadosAcervo = [];
 
-    // Função Mágica: Tenta buscar na Open Library se a imagem local falhar
-    function tratarErroCapa(img, isbn) {
-      // Se a imagem que deu erro JÁ É a da Open Library, significa que a API também não achou.
-      // Então, ocultamos a tag para não mostrar o ícone de arquivo quebrado.
-      if (img.src.includes('covers.openlibrary.org')) {
-        img.style.display = 'none';
-        return;
-      }
-
-      // Se deu erro na imagem local e temos um ISBN, tentamos a API
-      if (isbn) {
-        // Usamos o parâmetro L (Large) para boa qualidade, e default=false para poder tratar erros
-        img.src = `https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg?default=false`;
-      } else {
-        // Sem imagem local e sem ISBN, esconde
-        img.style.display = 'none';
-      }
-    }
-
+    // 1. Inicia o carregamento da planilha
     function iniciar() {
       Papa.parse(csvUrl, {
         download: true,
@@ -78,6 +60,7 @@
       });
     }
 
+    // 2. Renderiza os cartões na tela de forma segura
     function renderizarLista(itens) {
       const lista = document.getElementById('acervo-lista');
       lista.innerHTML = ''; 
@@ -88,33 +71,60 @@
       }
 
       itens.forEach((item) => {
-        const titulo = item.titulo || 'Sem título';
-        const referencia = item.referencia || '';
-        const imagemLocal = item.imagem || '';
-        const isbn = item.isbn || '';
+        // Cobre todas as variações possíveis de nomes de coluna
+        const colunas = Object.keys(item);
+        const titulo = item.titulo || item.Titulo || item.TÍTULO || item[colunas[0]] || 'Sem título';
+        const referencia = item.referencia || item.Referencia || item.Referência || '';
+        const imagemLocal = item.imagem || item.Imagem || item.Capa || '';
+        const isbn = item.isbn || item.Isbn || item.ISBN || '';
 
+        // Cria o cartão principal
         const card = document.createElement('div');
         card.className = 'livro-card'; 
-        
-        let conteudoCard = '';
-        
-        // Define a fonte inicial: se não tiver imagem na planilha, mas tiver ISBN, já pula direto pra API.
-        // Se tiver imagem na planilha, tenta ela primeiro.
-        let srcInicial = imagemLocal ? imagemLocal : (isbn ? `https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg?default=false` : '');
 
-        if (srcInicial) {
-            // O atributo onerror é onde a mágica de fallback acontece
-            conteudoCard += `<img src="${srcInicial}" onerror="tratarErroCapa(this, '${isbn}')" alt="Capa de ${titulo}" style="width:100%; max-height:200px; object-fit:cover; margin-bottom:10px;">`;
+        // Cria a tag da imagem
+        const img = document.createElement('img');
+        img.alt = `Capa de ${titulo}`;
+        img.style.width = '100%';
+        img.style.maxHeight = '200px';
+        img.style.objectFit = 'cover';
+        img.style.marginBottom = '10px';
+
+        // Lógica de fallback: Qual imagem carregar primeiro?
+        if (imagemLocal) {
+            img.src = imagemLocal;
+        } else if (isbn) {
+            img.src = `https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg?default=false`;
+        } else {
+            img.style.display = 'none'; // Não tem nenhuma das duas, oculta.
         }
 
-        conteudoCard += `<h3>${titulo}</h3><p>${referencia}</p>`;
-        card.innerHTML = conteudoCard;
+        // Lógica de fallback: Se a imagem quebrar ao tentar carregar
+        img.onerror = function() {
+            // Se falhou e NÃO é um link da Open Library ainda, tentamos a Open Library
+            if (!this.src.includes('covers.openlibrary.org') && isbn) {
+                this.src = `https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg?default=false`;
+            } else {
+                // Se falhou e JÁ ERA a Open Library (ou se não tem ISBN), esconde a tag
+                this.style.display = 'none';
+            }
+        };
 
+        // Cria a parte dos textos
+        const divTextos = document.createElement('div');
+        divTextos.innerHTML = `<h3>${titulo}</h3><p>${referencia}</p>`;
+
+        // Monta o cartão e adiciona o evento de clique
+        card.appendChild(img);
+        card.appendChild(divTextos);
         card.addEventListener('click', () => abrirModal(item));
+        
+        // Joga na tela
         lista.appendChild(card);
       });
     }
 
+    // 3. Sistema de Busca / Filtro
     document.getElementById('busca').addEventListener('input', function(e) {
       const termoBusca = e.target.value.toLowerCase();
       const itensFiltrados = dadosAcervo.filter(item => {
@@ -124,34 +134,44 @@
       renderizarLista(itensFiltrados);
     });
 
+    // 4. Lógica do Modal com Fallback
     function abrirModal(item) {
-      const titulo = item.titulo || '';
-      const imagemLocal = item.imagem || '';
-      const descricao = item.descricao || '';
-      const referencia = item.referencia || '';
-      const isbn = item.isbn || '';
+      const colunas = Object.keys(item);
+      const titulo = item.titulo || item.Titulo || item.TÍTULO || item[colunas[0]] || 'Sem título';
+      const referencia = item.referencia || item.Referencia || item.Referência || '';
+      const descricao = item.descricao || item.Descricao || item.Resumo || '';
+      const imagemLocal = item.imagem || item.Imagem || item.Capa || '';
+      const isbn = item.isbn || item.Isbn || item.ISBN || '';
 
       document.getElementById('titulo-detalhe').textContent = titulo;
       document.getElementById('descricao-detalhe').textContent = descricao;
       document.getElementById('referencia-detalhe').textContent = referencia;
 
       const imgElement = document.getElementById('imagem-detalhe');
-      
-      let srcInicial = imagemLocal ? imagemLocal : (isbn ? `https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg?default=false` : '');
+      imgElement.style.display = ''; // Garante que não ficou invisível do último clique
 
-      if (srcInicial) {
-        imgElement.src = srcInicial;
-        imgElement.style.display = ''; 
-        // Reaplica a regra de fallback no modal
-        imgElement.onerror = function() { tratarErroCapa(this, isbn); };
+      // Mesma lógica de fallback da lista principal
+      if (imagemLocal) {
+        imgElement.src = imagemLocal;
+      } else if (isbn) {
+        imgElement.src = `https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg?default=false`;
       } else {
         imgElement.src = '';
         imgElement.style.display = 'none';
       }
 
+      imgElement.onerror = function() {
+        if (!this.src.includes('covers.openlibrary.org') && isbn) {
+            this.src = `https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg?default=false`;
+        } else {
+            this.style.display = 'none';
+        }
+      };
+
       document.getElementById('detalhes-livro').classList.remove('hidden');
     }
 
+    // Fechar Modal
     document.getElementById('fechar-modal').addEventListener('click', function() {
       document.getElementById('detalhes-livro').classList.add('hidden');
     });
@@ -162,6 +182,7 @@
       }
     });
 
+    // Dispara a leitura
     iniciar();
   </script>
 </body>
