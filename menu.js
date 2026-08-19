@@ -14,6 +14,10 @@ document.addEventListener("DOMContentLoaded", () => {
     .then((html) => {
       // 3. Injeta o HTML dentro da div reservada
       document.getElementById("header-placeholder").innerHTML = html;
+      // 4. LÓGICA DO LINK ATIVO
+      // Pega todos os links dentro do menu que acabamos de injetar
+      const links = document.querySelectorAll(".menu current");
+
       // Pega o caminho da URL atual (ex: /sobre.html)
       const currentPath = window.location.pathname;
       links.forEach((link) => {
