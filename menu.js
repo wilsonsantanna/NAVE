@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("header-placeholder").innerHTML = html;
       // 4. LÓGICA DO LINK ATIVO
       // Pega todos os links dentro do menu que acabamos de injetar
-      const links = document.querySelectorAll(".menu current");
+      const links = document.querySelectorAll(".menu a");
 
       // Pega o caminho da URL atual (ex: /sobre.html)
       const currentPath = window.location.pathname;
