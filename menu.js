@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Também cobrimos o caso da página inicial, que pode ser "/" ou "/index.html"
         if (
           currentPath === linkPath ||
-          (currentPath === "/" && linkPath === "/index.html")
+          (currentPath === "/" && linkPath === "./index.html")
         ) {
           link.classList.add("current");
         }
